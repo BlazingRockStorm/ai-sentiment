@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require 'sentiment_ai/version'
-require 'openai'
-require 'gemini-ai'
+require 'sentiment_ai/dependency'
 
 module SentimentAI
   def self.adapter=(klass)
@@ -17,8 +16,10 @@ module SentimentAI
     def initialize(model, token)
       @generative_ai = case model
                        when :open_ai
+                         depends_on 'openai'
                          OpenAI::Client.new(access_token: token)
                        when :gemini_ai_flash, :gemini_ai_pro
+                         depends_on 'gemini-ai'
                          model_type = model == :gemini_ai_flash ? 'gemini-flash' : 'gemini-pro'
                          Gemini.new(
                            credentials: {
